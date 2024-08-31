@@ -1,0 +1,244 @@
+Instruções
+Nessa atividade vamos ter a oportunidade de executar outro projeto web no Eclipse, e conhecer um pouco do Spring Boot, um framework para desenvolvimento web muito utilizado no mercado de trabalho.
+
+Para realizar a atividade você vai precisar estar com o compilador Java e o Eclipse devidamente instalados no seu computador, ok? 
+
+E o Tomcat, não precisa ter ele instalado também? Veja que interessante, para rodar uma aplicação Spring Boot, não! 
+
+Como veremos a seguir, uma aplicação Spring Boot, ao ser iniciada, já coloca no ar um Tomcat devidamente configurado e pronto para rodar nossa aplicação! Muito prático, não é mesmo?
+
+Importante: caso você ainda não tenha instalado o compilador Java e o Eclipse, pare por aqui e faça isso antes de prosseguir! Siga as instruções dos vídeos postados na sala da nossa disciplina.
+
+Certo, estou então assumindo que seu Eclipse está funcionando como deveria. Vamos em frente!
+
+Você deve agora fazer o download do arquivo abaixo, e extrair seu conteúdo usando algum software de descompactação (como o 7zip).
+
+---- ProjetoForumUnidade3.zip ----
+
+O arquivo contém nosso projeto Spring Boot, que precisaremos importar no Eclipse. Para fazer essa importação, siga as instruções abaixo:
+
+- Com o Eclipse aberto, clique no menu "File", depois em "Import..."
+
+- Selecione a opção "Maven", depois "Existing Maven Projects", depois clique no botão "Next"
+
+
+
+- Na janela "Import Projects", clique agora no botão "Browse..."
+
+- Vá até a pasta onde o arquivo "ProjetoForumUnidade2.zip" foi extraído (por exemplo, C:\temp\ProjetoForumUnidade3), depois clique no botão "Selecionar Pasta"
+
+- Agora, com o projeto "ProjetoForumUnidade3" aparecendo na lista "Projects" da janela "Maven Projects", clique no botão "Finish"
+
+Veja que o projeto "ProjetoForumUnidade3" agora aparece na aba "Package Explorer" do Eclipse.
+
+Repare também que ali embaixo, na guia "Progress", o Maven está automaticamente importando diversas bibliotecas Java, necessárias para execução da aplicação. 
+
+
+
+Importante: se no seu Eclipse o Maven não importar automaticamente as bibliotecas, faça o seguinte: na guia "Project Explorer", clique com o botão direito do mouse no projeto "ProjetoForumUnidade3". Selecione o item de menu "Maven", depois "Update Project". 
+
+Essa importação é um pouco demorada, por isso tenha paciência e aguarde até que todas as bibliotecas sejam baixadas para o seu computador. A importação é feita uma única vez (ufa!), e depois disso os arquivos ficam disponíveis na sua máquina para esse e outros projetos Spring Boot.
+
+Certo, a importação chegou ao fim? Vamos confirmar? Veja se sua janela "Project Explorer" está como abaixo, mostrando os arquivos .jar importados pelo Maven:
+
+
+
+Se conseguiu chegar até aqui, excelente! Você já está com o projeto pronto para ser executado. Mas antes disso, vamos falar um pouco sobre ele....
+
+O projeto que importamos é bastante parecido com aquele que foi estudado em uma atividade avaliativa anterior. Ao invés de usar Servlets, no entanto, estamos usando aqui um framework bastante utilizado no mercado de trabalho: o Spring Boot. Assim como na atividade anterior, temos aqui um projeto que consiste de uma página web onde você poderá fazer o cadastro de um ou mais alunos.
+
+Abra o arquivo "pom.xml". Esse é o arquivo usado pelo Maven, e que basicamente define todas as bibliotecas java (arquivos .jar) necessárias para executar nossa aplicação Spring Boot. O Maven é um gerenciador de dependências, que como você pôde observar, faz automaticamente o download dos arquivos .jar usados pelo projeto. É uma ferramenta essencial no desenvolvimento de aplicações de Java, porque elimina a necessidade do programador fazer o download e configuração manual desses arquivos, um a um, para seu projeto. Quase todos os projetos hoje desenvolvidos em Java usam o Maven (com exceção daqueles que usam o Graddle, que essencialmente faz a mesma coisa). Para saber mais sobre essa fantástica ferramenta, pesquise sobre ela na Internet.
+
+Abra agora o arquivo "application.properties", que está na pasta "src/main/resources". É nesse arquivo que são registradas algumas configurações do Spring Boot. No nosso projeto, as propriedades que você encontra ali definem que estamos usando páginas JSP na camada de apresentação, e que nossas páginas estão armazenadas na pasta "WEB-INF/jsp"
+
+Abra agora o arquivo "index.jsp", que está na pasta "src/main/webapp/WEB-INF/jsp". Dê uma olhada no código da página. Veja que não estamos mais usando, nesse projeto, as tags <% e %> para embutir código Java na página. No lugar dessas tags JSP, estamos fazendo uso de tags da biblioteca JSTL. Note que também estamos usando a EL no lugar das tags <%= e %>. 
+
+Assim como no projeto anterior, encontramos no arquivo "index.jsp" um formulário, onde iremos informar os dados para o cadastro de um aluno. Ali, encontramos também uma tabela que será usada para mostrar os alunos que foram cadastrados. 
+
+Abra agora a pasta "src/main/java". Dê uma olhada no que tem dentro dela. Você vai encontrar diversas classe, organizadas em pacotes para uma melhor organização de conteúdo. A classe "Aluno" é usada para guardar os dados de um aluno. A classe "AlunoDAO" é usada para guardar os alunos cadastrados na sessão do usuário, exatamente como fizemos no projeto anterior. A diferença, aqui, é que usamos uma classe própria para gerenciar a inclusão, exclusão e pesquisa de alunos - exatamente a ideia de um DAO, que vamos estudar na Unidade 4.
+
+A classe "AlunoController" é parecida com os nossos conhecidos Servlets. No entanto, ao contrário de um servlet, você vai encontrar na classe Controller diversos métodos para tratar requisições HTTP. Enquanto lá nos Servlets nós usávamos uma classe para tratar uma chamada HTTP, aqui usamos uma única classe para tratar diversas chamadas. Legal, não?
+
+Isso é possível com a adição das anotações @RequestMapping, @GetMapping e @PostMapping nos métodos da classe. Essas anotações definem as URLs que, quando chamadas, serão tratadas pelo método correspondente. Repare que a classe "AlunoController" foi definida com a anotação @Controller. É essa anotação que informa ao Spring que a classe é um controlador, ou seja, uma classe que receberá requisições HTTP para serem tratadas pelo Spring.
+
+Repare ainda que a classe "AlunoController" contém, também, uma referência a um objeto do tipo "AlunoDAO". Se você observar bem o código da classe "AlunoController", verá que em nenhum lugar dela a classe "AlunoDAO" é instanciada. Repare, no entanto, que na declaração de "AlunoDAO" aparece a anotação @Autowired. O que ela quer dizer? 
+
+Nesse caso, o que temos aqui é uma "injeção de dependência". Em outra palavras, quando a aplicação for executada, o Spring automaticamente se encarregará de criar uma instância da classe AlunoDAO e setar essa instância na variável do tipo "AlunoDAO". Parece mágica, não é mesmo? Isso é o Spring em ação.
+
+Agora, um ponto importante: para que a anotação @Autowired funcione, nosso DAO precisa também ter uma anotação do Spring: @Component. Verifique lá na classe AlunoDAO, essa anotação aparece antes da definição da classe. É ela que vai tornar possível ao Spring instanciar e "injetar" uma instância de AlunoDAO no nosso controlador, por meio da anotação @Autowired.
+
+Certo, sabemos que o Spring irá instanciar automaticamente a classe AlunoDAO para o nosso controlador. Mas dê uma olhada no construtor do DAO:
+
+    public AlunoDAO(HttpSession session) {
+        this.session = session ;
+    }
+
+Você está vendo que, ao criar uma instância de AlunoDAO é necessário passar para o construtor um objeto do tipo HttpSession? Pois é, mais uma vez o Spring nos ajuda: ao criar o DAO, ele automaticamente já passa para o construtor da classe esse objeto HttpSession (que corresponde à sessão do usuário). Fantástico, não é mesmo?
+
+Voltemos agora à nossa página index.jsp. Repare que o formulário foi assim definido: 
+
+<form action="/cadastrarAluno" method="get">
+
+O "action" do form, nesse caso, está apontando para o método "cadastarAluno" do controlador, porque ele foi declarado com a seguinte anotação:
+
+@RequestMapping(path = "/cadastrarAluno", method = RequestMethod.GET)
+
+Por fim, temos a classe "ProjetoApplication". Ela contém um método "main" e está anotada com @SpringBootApplication. É essa classe que precisamos executar para colocar nossa aplicação Spring Boot no ar. Vamos lá?
+
+Para executar a aplicação, siga os passos abaixo:
+
+- Clique com o botão direito na classe "ProjetoApplication" 
+
+- No menu que foi aberto, selecione a opção "Run As", depois a opção "Java Application"
+
+Se tudo der certo (tenha fé, vai dar!), você vai ver na guia "Console" algo parecido com a imagem abaixo:
+
+
+
+E o que aconteceu? 
+
+O Spring Boot iniciou automaticamente um Tomcat próprio, e ao final da inicialização você pôde observar no log a seguinte mensagem: "Tomcat started on port(s): 8080 (http) with context path ''"
+
+Abra agora um navegador web, e informe na barra de endereço o seguinte: http://localhost:8080/
+
+De acordo com o que foi configurado no nosso controlador, quando nenhuma url é informada após localhost:8080, a página "index.jsp" será exibida:
+
+  @RequestMapping("/")
+  public String exibirPaginaIndex() {
+    return "index" ;
+  }
+
+Você deverá ver agora a página inicial da aplicação. Parabéns por chegar até aqui! 
+
+
+
+Podemos agora iniciar o trabalho. Com a página aberta, faça o seguinte:
+
+Atividade 1) Informe os dados de um aluno, depois clique no botão "Confirmar Cadastro". Veja que um aluno foi cadastrado, e agora seus dados aparecem na tabela. Observando a url que foi chamada, responda: qual método da classe "AlunoController" foi executado, e como você chegou a essa conclusão? (dica: repare que a url começa com http://localhost:8080/cadastrarAluno) (0.15 pontos)
+
+Importante: Estou perguntando aqui qual método da classe foi chamado. Não confunda isso com o que está aparecendo na url chamada, você precisa analisar o código que está no arquivo AlunoController.java. 
+
+Atividade 2) Abra agora o arquivo "AlunoController", e comente a linha contendo a anotação @RequestMapping, logo acima do método "cadastrarAluno1". Descomente também a linha contendo a anotação @PostMapping. Seu código deverá ficar assim:
+
+    // @RequestMapping(path = "/cadastrarAluno", method = RequestMethod.GET)
+    @PostMapping("/cadastrarAluno")
+    // @GetMapping("/cadastrarAluno")
+
+Salve o arquivo "AlunoController.java". 
+
+Recompile a aplicação (digitando CTRL + B ou clicando no menu "Project", depois em "Build All"). Você vai notar, por meio do log na janela "Console", que o Spring vai atualizar a aplicação depois de fazer isso.
+
+Acesse novamente o endereço http://localhost:8080/  
+
+Tente agora cadastrar um novo aluno. Responda: o que aconteceu? Se ocorreu um erro, informe qual foi esse erro. (0.15 pontos)
+
+Atividade 3) Abra novamente o arquivo "AlunoController", e comente a linha contendo a anotação @PostMapping, logo acima do método "cadastrarAluno". Descomente também a linha contendo a anotação @GetMapping. Seu código deverá ficar assim:
+
+    // @RequestMapping(path = "/cadastrarAluno", method = RequestMethod.GET)
+    // @PostMapping("/cadastrarAluno")
+    @GetMapping("/cadastrarAluno")
+
+Salve o arquivo "AlunoController.java". 
+
+Recompile a aplicação (digitando CTRL + B ou clicando no menu "Project", depois em "Build All"). 
+
+Acesse novamente o endereço http://localhost:8080/  
+
+Tente agora cadastrar um novo aluno. Responda: o que aconteceu? (0.15 pontos)
+
+Observação: as anotações @PostMapping e @GetMapping tem o mesmo significado da anotação @RequestMapping, mas são mais fáceis de escrever, porque já definem o método HTTP que será tratado pelo controlador. 
+
+Atividade 4) Observe o código do método "cadastrarAluno1". Veja como ele se parece com o método "service" de um servlet (embora contenha menos parâmetros e não tenha as exceções declaradas no método de um servlet). Estamos aqui recebendo um objeto "HttpServletRequest", recuperando os dados que foram informados no formulário chamando "getParameter", depois criamos um objeto do tipo Aluno, guardamos nele os dados recuperados da requisição, e guardamos o objeto Aluno na requisição. 
+
+Muito parecido com nossa solução usando Servlets!
+
+Vamos agora modificar nosso formulário, na página "index.jsp", para que ele chame o método "cadastrarAluno2", ao invés do método "cadastrarAluno". O formulário deverá ficar assim:
+
+<form action="/cadastrarAluno2" method="get">
+
+Salve o arquivo "index.jsp" e acesse novamente o endereço http://localhost:8080/ (não é necessário reiniciar a aplicação). 
+
+Tente agora cadastrar um novo aluno. 
+
+Você verá que um novo aluno será adicionado na tabela (importante: verifique se a url chamada começa com http://localhost:8080/cadastrarAluno2)
+
+Sabendo que os métodos "cadastrarAluno1" e "cadastrarAluno2" fazem extamente a mesma coisa, responda:
+
+O que mudou, na implementação do código do primeiro para o segundo método? (0.15 pontos)
+
+Importante: responda observando a diferença entre o código dos dois métodos, na classe. Não confunda isso com o que está aparecendo na url chamada, você precisa analisar o código que está no arquivo AlunoController.java. 
+
+Atividade 5) Vamos agora modificar mais uma vez nosso formulário, na página "index.jsp", para que ele chame o método "cadastrarAluno3", ao invés do método "cadastrarAluno3". O formulário deverá ficar assim:
+
+<form action="/cadastrarAluno3" method="get">
+
+Salve o arquivo "index.jsp" e acesse novamente o endereço http://localhost:8080/ (não é necessário reiniciar a aplicação). 
+
+Tente agora cadastrar um novo aluno. 
+
+Você verá que um novo aluno será adicionado na tabela (importante: verifique se a url chamada começa com http://localhost:8080/cadastrarAluno3).
+
+Sabendo que os métodos "cadastrarAluno1" e "cadastrarAluno3" fazem extamente a mesma coisa, responda: o que mudou, na implementação do primeiro para esse outro método? Responda observando o que mudou no código do método, na classe. (0.15 pontos)
+
+Importante: responda observando a diferença entre o código dos dois métodos, na classe. Não confunda isso com o que está aparecendo na url chamada, você precisa analisar o código que está no arquivo AlunoController.java. 
+
+Atividade 6) Abra agora a página "index.jsp", e analise a seguinte tag JSTL:
+
+    <c:forEach var="aluno" items="${sessionScope.listaAlunos}">
+
+De acordo com a EL que aparece definida para o atributo "items", responda:
+
+De onde a lista de alunos é recuperada, para o loop? (0.15 pontos)
+
+Importante: responda com base na expressão ${sessionScope.listaAlunos} 
+
+Atividade 7) Cadastre agora alguns alunos (pelo menos 5). Depois, clique no link "Excluir" de algum aluno na tabela. Veja que o aluno foi removido da tabela. Observando a url que foi chamada, responda: qual método da classe "AlunoController" foi executado para excluir o aluno, e como você chegou a essa conclusão? (dica: repare que a url começa com http://localhost:8080/excluirAluno) (0.15 pontos)
+
+Importante: Estou perguntando aqui qual método da classe foi chamado. Não confunda isso com o que está aparecendo na url chamada, você precisa analisar o código que está no arquivo AlunoController.java.
+
+Atividade 8) Tendo cadastrado pelo menos 5 alunos na tabela, acesse o seguinte endereço: http://localhost:8080/pesquisarTodosAlunos 
+
+Responda: o que aparece na tela?
+
+Coloque o texto retornado como parte da sua resposta. (0.15 pontos)
+
+Atividade 9) Analise o código do método "pesquisarTodosAlunos", na classe "AlunoController". Ele implementa um web-service que retorna a lista de alunos cadastrados, em formato JSON. Comparando esse método com os métodos anteriores, que usamos para cadastrar e excluir alunos, responda: o que ele tem de diferente, para retornar a resposta do item 8, e não uma página JSP? (0.15 pontos)
+
+Importante: observe se há alguma anotação a mais no método, e também o tipo de retorno do método.
+
+Atividade 10) Abra a classe "AlunoController" e comente a linha contendo a anotação @Autowired, logo acima da declaração da variável do tipo AlunoDAO. Seu código deverá ficar assim:
+
+    // @Autowired
+    private AlunoDAO dao ; 
+
+Salve o arquivo "AlunoController.java". 
+
+Recompile a aplicação (digitando CTRL + B ou clicando no menu "Project", depois em "Build All"). 
+
+Acesse novamente o endereço http://localhost:8080/  
+
+Tente agora cadastrar um novo aluno. 
+
+Responda: o que aconteceu?
+
+Se foi reportado algum erro na tela, informe qual foi esse erro. (0.15 pontos)
+
+Observação: esse resultado se deve ao fato de que, sem a anotação @Autowired, a instância de AlunoDAO não é mais automaticamente criada pelo Spring.
+
+Chegamos ao fim do trabalho! E então, o que achou de conhecer um pouco do Spring Boot? 
+
+Você notou que a classe DAO "esconde" do controlador a maneira como a lista de alunos é armazenada? É isso que faz um DAO!
+
+Veremos mais sobre esse importante padrão de projeto nos estudos da Unidade 4.
+
+IMPORTANTE: 
+
+Responda aos itens de 1 a 10 por meio de um documento do Word ou pdf.
+Deixe clara a resposta de cada item. Por exemplo: 
+    1) xxxxx
+    2) yyyyy
+    ...
+
+Tente ser breve e objetivo na sua resposta (por favor!)
+Atenção, pois o trabalho será avaliado uma única vez!
+Então agora.... Mãos à obra!
