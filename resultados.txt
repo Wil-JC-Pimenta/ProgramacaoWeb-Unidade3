@@ -1,0 +1,178 @@
+
+FORUM PROGRAMAÇÃO WEB – ATIVIDADE 3
+Atividade 1)
+Pergunta: Informe os dados de um aluno, depois clique no botão "Confirmar Cadastro". Veja que um aluno foi cadastrado, e agora seus dados aparecem na tabela. Observando a URL que foi chamada, responda: qual método da classe "AlunoController" foi executado, e como você chegou a essa conclusão? (dica: repare que a URL começa com http://localhost:8080/cadastrarAluno).
+Resposta: O método que foi executado é o cadastrarAluno1. Cheguei a essa conclusão porque, no código, o método cadastrarAluno1 está mapeado para a URL /cadastrarAluno usando a anotação @RequestMapping(path = "/cadastrarAluno", method = RequestMethod.GET). Isso significa que sempre que a URL /cadastrarAluno for acessada via o método GET (o padrão para formulários simples), esse método será executado:
+String br.catolica.controller.AlunoController.cadastrarAluno1(HttpServletRequest request)
+@RequestMapping(path={"/cadastrarAluno"}, method={GET})
+Quando a url /cadastrarAluno é chamada, executa esse método 
+Parameters:
+request 
+_____________________________________________________________________________
+Atividade 2)
+Pergunta: Comente a linha contendo a anotação @RequestMapping, descomente a linha contendo @PostMapping, recompile a aplicação e tente cadastrar um novo aluno. Responda: o que aconteceu?
+Resposta: Ao fazer essa alteração, o método cadastrarAluno1 passa a responder apenas a requisições POST. Se você tentar cadastrar um novo aluno via GET (o que acontece normalmente quando você submete um formulário com method="get"), a aplicação não encontrará um mapeamento adequado e retornará um erro 405 Method Not Allowed. Isso ocorre porque o método cadastrarAluno1 não está mais configurado para responder a requisições GET, apenas a POST.
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+Fri Aug 30 15:29:28 BRT 2024
+There was an unexpected error (type=Method Not Allowed, status=405).
+Request method 'GET' not supported
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' not supported
+
+
+Atividade 3)
+Pergunta: Comente a linha contendo a anotação @PostMapping e descomente a linha contendo @GetMapping. Recompile a aplicação e tente cadastrar um novo aluno. Responda: o que aconteceu?
+Resposta: Ao fazer essa alteração, o método cadastrarAluno1 volta a responder a requisições GET. Quando você tenta cadastrar um novo aluno, o método cadastrarAluno1 será executado corretamente e o aluno será cadastrado, exibindo a página "index.jsp" com os dados do aluno na tabela.
+URL: http://localhost:8080/cadastrarAluno?nome=Wilker&sexo=Masculino&semestre=Primeiro
+Aluno cadastrado:
+Id: 1 Nome: Wilker Sexo: Masculino Semestre: Primeiro
+Alunos Cadastrados:
+Id	Nome	Sexo	Semestre	Excluir
+1	Wilker	Masculino	Primeiro	Excluir
+
+
+
+--------------------------------------------------------OK
+
+Atividade 4)
+Pergunta: Modifique o formulário na página "index.jsp" para que ele chame o método cadastrarAluno2. Compare o código do cadastrarAluno1 com o cadastrarAluno2. O que mudou na implementação do código?
+Resposta: A principal diferença entre cadastrarAluno1 e cadastrarAluno2 é a maneira como os dados do formulário são recuperados. No método cadastrarAluno1, os dados são obtidos manualmente a partir do objeto HttpServletRequest usando request.getParameter("nome"), enquanto no cadastrarAluno2, os dados são obtidos diretamente como parâmetros do método usando @RequestParam("nome") String nome. Essa abordagem é mais simples e limpa, evitando o uso direto do objeto HttpServletRequest.
+
+
+
+
+---------------------------OK
+Atividade 5)
+Pergunta: Modifique o formulário na página "index.jsp" para que ele chame o método cadastrarAluno3. Compare o código do cadastrarAluno1 com o cadastrarAluno3. O que mudou na implementação do código?
+Resposta: A principal diferença entre cadastrarAluno1 e cadastrarAluno3 é a forma como o objeto Aluno é criado. No método cadastrarAluno3, o objeto Aluno é criado automaticamente pelo Spring a partir dos parâmetros do formulário, graças ao uso de um objeto do tipo Aluno como argumento do método (Aluno novoAluno). Isso é possível porque o Spring automaticamente associa os campos do formulário ao objeto Aluno. Isso elimina a necessidade de definir cada parâmetro individualmente.
+Aluno novoAluno - br.catolica.controller.AlunoController.cadastrarAluno3(Aluno, Model)
+
+void br.catolica.dao.AlunoDAO.persistirAluno(Aluno aluno)
+
+Método chamado para persistir um aluno 
+Parameters:
+aluno 
+
+
+
+
+--------------------------------------------------OK
+Atividade 6)
+Pergunta: De acordo com a EL que aparece definida para o atributo "items" em <c:forEach var="aluno" items="${sessionScope.listaAlunos}">, de onde a lista de alunos é recuperada?
+Resposta: A lista de alunos é recuperada do escopo de sessão (sessionScope). Isso significa que a lista foi armazenada como um atributo da sessão, e não está associada diretamente a uma requisição ou aplicação inteira. 
+<!--  Se a lista esta vazia, mostra mensagem de alunos nao cadastrados -->
+<c:if test="${empty sessionScope.listaAlunos}">			
+
+   <h2>Ainda não há alunos cadastrados.</h2>
+</c:if>
+
+<!-- Caso contrario, mostra tabela com os alunos cadastrados -->   	
+<c:if test="${not empty sessionScope.listaAlunos}">
+
+	<c:if test="${not empty requestScope.alunoCadastrado}">
+		<h2>Aluno cadastrado:</h2>
+		Id: ${requestScope.alunoCadastrado.id}
+		Nome: ${requestScope.alunoCadastrado.nome}
+		Sexo: ${requestScope.alunoCadastrado.sexo}
+		Semestre: ${requestScope.alunoCadastrado.semestre}
+	</c:if>
+
+
+
+------------------------------------------------- OK
+
+
+Atividade 7)
+Pergunta: Cadastre alguns alunos e exclua um. Observando a URL chamada, responda: qual método da classe "AlunoController" foi executado para excluir o aluno?
+Resposta: O método executado foi o excluirAluno. Cheguei a essa conclusão porque, no código, o método excluirAluno está mapeado para a URL /excluirAluno com o método HTTP GET, usando a anotação @GetMapping("/excluirAluno").
+
+URL: http://localhost:8080/excluirAluno?id=3
+
+/** Quando a url /excluirAluno é chamada, executa esse método */
+	//----------------------------------------------------------------------	
+	@GetMapping("/excluirAluno")
+	public String excluirAluno(@RequestParam("id") String idAluno) {
+		
+		// Exclui o aluno da lista de alunos já cadastrados
+		dao.excluirAluno(idAluno) ;
+		
+		// Exibe pagina index.jsp
+		return "index" ;		
+	}	
+	
+
+_____________________________________________ OK
+
+
+
+
+
+Atividade 8)
+Pergunta: Acesse o endereço http://localhost:8080/pesquisarTodosAlunos. O que aparece na tela? Coloque o texto retornado como parte da sua resposta.
+Resposta: Quando você acessa o endereço http://localhost:8080/pesquisarTodosAlunos, o que aparece na tela é um JSON contendo todos os alunos cadastrados no sistema:
+[
+    {
+        "id": 1,
+        "nome": "Wilker",
+        "sexo": "Masculino",
+        "semestre": "Primeiro"
+    },
+    {
+        "id": 2,
+        "nome": "Joao",
+        "sexo": "Masculino",
+        "semestre": "Primeiro"
+    }
+]
+
+Atividade 9)
+Pergunta: Analise o método pesquisarTodosAlunos. O que ele tem de diferente para retornar a resposta do item 8, e não uma página JSP?
+Resposta: O método pesquisarTodosAlunos é diferente dos outros métodos porque ele usa a anotação @ResponseBody. Essa anotação instrui o Spring a serializar o retorno do método (neste caso, uma lista de objetos Aluno) diretamente para o formato JSON, em vez de retornar o nome de uma página JSP. Além disso, o tipo de retorno do método é uma List<Aluno>, em vez de String, o que é apropriado para o retorno de dados JSON.
+org.springframework.web.bind.annotation.ResponseBody
+
+@Target(value={METHOD, TYPE})
+@Retention(value=RUNTIME)
+@Documented
+Annotation that indicates a method return value should be bound to the web response body. Supported for annotated handler methods. 
+As of version 4.0 this annotation can also be added on the type level in which case it is inherited and does not need to be added on the method level.
+Since:
+3.0
+Author:
+Arjen Poutsma
+See Also:
+RequestBody
+RestController
+
+
+
+
+
+
+
+Atividade 10)
+Pergunta: Comente a linha contendo a anotação @Autowired, logo acima da declaração da variável do tipo AlunoDAO. Recompile a aplicação e tente cadastrar um novo aluno. Responda: o que aconteceu?
+Resposta: Quando você comenta a anotação @Autowired, o Spring não injeta mais automaticamente uma instância de AlunoDAO na variável dao. Como resultado, ao tentar cadastrar um novo aluno, a aplicação lança uma exceção de NullPointerException quando tenta acessar o método dao.persistirAluno(novoAluno), porque dao não foi inicializado e é null:
+
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+Fri Aug 30 16:00:37 BRT 2024
+There was an unexpected error (type=Internal Server Error, status=500).
+Cannot invoke "br.catolica.dao.AlunoDAO.persistirAluno(br.catolica.dominio.Aluno)" because "this.dao" is null
+java.lang.NullPointerException: Cannot invoke "br.catolica.dao.AlunoDAO.persistirAluno(br.catolica.dominio.Aluno)" because "this.dao" is null
+
+
+_____________________OK
+
+
+
+
+
+
+
+
+
+
+
+
+
+
